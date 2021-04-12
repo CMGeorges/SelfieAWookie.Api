@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>a72283d6-a62c-4012-9cc0-c74db301a410</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.13" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SelfieAWookie.Core.Selfies.Domain\SelfieAWookie.Core.Selfies.Domain.csproj" />
+    <ProjectReference Include="..\SelfieAWookie.Core.Selfies.Infrastructures\SelfieAWookie.Core.Selfies.Infrastructures.csproj" />
+  </ItemGroup>
+
+</Project>
