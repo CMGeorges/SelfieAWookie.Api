@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using SelfieAWookie.Core.Selfies.Infrastructures.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +28,11 @@ namespace SelfieAWookie.Api.UI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<SelfiesContext>(options => {
+
+                options.UseSqlServer(this.Configuration.GetConnectionString("SelfiesDatabase"),sqlOptions=>{});
+                //TODO: Create SqlServer Docker Container
+            } );
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
