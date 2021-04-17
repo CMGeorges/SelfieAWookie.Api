@@ -1,4 +1,5 @@
- using SelfieAWookie.Api.UI.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using SelfieAWookie.Api.UI.Controllers;
 using System;
 using Xunit;
 
@@ -15,7 +16,7 @@ namespace SelfieAWookie.Api.UI.Test
         public void ShouldReturnLisOfSelfies()
         {
             //ARRANGE
-            var controler = new SelfieController();
+            var controler = new SelfieController(null);
 
             //ACT
             var result = controler.TestApi();
@@ -23,7 +24,10 @@ namespace SelfieAWookie.Api.UI.Test
 
             //ASSERT
             Assert.NotNull(result);
-            Assert.True(result.GetEnumerator().MoveNext());
+            Assert.IsType<OkObjectResult>(result);
+
+            OkObjectResult objectResult = result as OkObjectResult;
+            Assert.NotNull(objectResult.Value);
 
 
         }

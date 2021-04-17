@@ -1,4 +1,6 @@
-﻿namespace SelfieAWookie.Core.Selfies.Domain.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace SelfieAWookie.Core.Selfies.Domain.Models
 {
     /// <summary>
     /// Représente un selfie avec un wookie lié
@@ -8,6 +10,7 @@
 
         #region Properties
 
+       // [Key]
         public int Id { get; set; }
 
         public string Title { get; set; }

@@ -31,7 +31,7 @@ namespace SelfieAWookie.Api.UI
             services.AddDbContext<SelfiesContext>(options => {
 
                 options.UseSqlServer(this.Configuration.GetConnectionString("SelfiesDatabase"),sqlOptions=>{});
-                //TODO: Create SqlServer Docker Container
+               
             } );
 
             services.AddControllers();
