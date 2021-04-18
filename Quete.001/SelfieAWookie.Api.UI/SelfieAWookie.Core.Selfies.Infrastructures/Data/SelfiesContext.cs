@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SelfieAWookie.Core.Framework;
 using SelfieAWookie.Core.Selfies.Domain.Models;
 using SelfieAWookie.Core.Selfies.Infrastructures.Data.TypeConfigurations;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SelfieAWookie.Core.Selfies.Infrastructures.Data
 {
-    public class SelfiesContext :DbContext
+    public class SelfiesContext : DbContext, IUnitOfWork
     {
         #region Ctor
         public SelfiesContext([NotNullAttribute] DbContextOptions options ):base(options){}

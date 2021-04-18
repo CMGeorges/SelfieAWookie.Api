@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using SelfieAWookie.Api.UI.Application.DTOs;
+using SelfieAWookie.Core.Selfies.Domain;
 using SelfieAWookie.Core.Selfies.Domain.Models;
 using SelfieAWookie.Core.Selfies.Infrastructures.Data;
 using System;
@@ -17,17 +19,19 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         #region Fields
 
-        private readonly SelfiesContext _context;
+        private readonly ISelfieRepository _repository;
         #endregion
 
 
         #region Ctor
 
-        public SelfieController(SelfiesContext context)
+        public SelfieController(ISelfieRepository repository)
         {
-            this._context = context;
+            this._repository = repository;
         }
+
         #endregion
+
 
         #region Public methods
 
@@ -42,11 +46,25 @@ namespace SelfieAWookie.Api.UI.Controllers
             //            on selfie.WookieId equals wookie.Id
             //            select wookie;
 
-            var model = this._context.Selfies.Include(item => item.Wookie).ToList();
+            var selfiesList = this._repository.GetAll();
+            var model = selfiesList.Select(item => new SelfieResumeDto(){ Title = item.Title, WookieId = item.Wookie.Id, NbSelfiesFromWookie = (item.Wookie?.Selfies?.Count).GetValueOrDefault(0) }).ToList();
 
 
             return this.Ok(model);
         }
+
+
+        [HttpPost]
+        public IActionResult AddOne(SelfieDto selfie)
+        {
+
+
+            return this.Ok(new SelfieDto() 
+            {
+                Id = 1
+            });
+        }
+
         #endregion
     }
 }
