@@ -8,8 +8,24 @@ using System.Threading.Tasks;
 
 namespace SelfieAWookie.Core.Selfies.Domain
 {
+    /// <summary>
+    /// Repository to manage selfies
+    /// </summary>
    public interface ISelfieRepository : IRepository
     {
-        ICollection<Selfie> GetAll();
+
+
+        /// <summary>
+        /// Get all selfies
+        /// </summary>
+        /// <returns></returns>
+        ICollection<Selfie> GetAll(int wookieId);
+
+        /// <summary>
+        /// Additon of one selfie in DataBase
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        Selfie AddOne(Selfie item);
     }
 }

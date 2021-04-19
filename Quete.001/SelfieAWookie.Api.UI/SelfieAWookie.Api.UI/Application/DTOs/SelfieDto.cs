@@ -10,6 +10,8 @@ namespace SelfieAWookie.Api.UI.Application.DTOs
 
         #region Properties
         public int Id { get; set; }
+        public string ImagePath { get; internal set; }
+        public string Title { get; internal set; }
         #endregion
     }
 }

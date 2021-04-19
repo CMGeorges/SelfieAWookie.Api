@@ -10,7 +10,7 @@ namespace SelfieAWookie.Core.Selfies.Domain.Models
 
         #region Properties
 
-       // [Key]
+        [Key]
         public int Id { get; set; }
 
         public string Title { get; set; }

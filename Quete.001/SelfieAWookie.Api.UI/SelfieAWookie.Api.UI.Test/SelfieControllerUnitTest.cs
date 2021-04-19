@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using SelfieAWookie.Api.UI.Application.DTOs;
 using SelfieAWookie.Api.UI.Controllers;
+using SelfieAWookie.Core.Framework;
 using SelfieAWookie.Core.Selfies.Domain;
 using SelfieAWookie.Core.Selfies.Domain.Models;
 using System;
@@ -22,10 +23,14 @@ namespace SelfieAWookie.Api.UI.Test
         public void ShouldAddOneSelfie()
         {
             //ARRANGE 
-            Selfie selfie = new Selfie();
+            SelfieDto selfie = new SelfieDto();
             var repositoryMock = new Mock<ISelfieRepository>();
+            var unit = new Mock<IUnitOfWork>();
 
 
+            repositoryMock.Setup(item => item.UnitOfWork).Returns(unit.Object);
+            repositoryMock.Setup(item => item.AddOne(It.IsAny<Selfie>())).Returns(new Selfie() { Id = 4 });
+           
             //ACT
             var controler = new SelfieController(repositoryMock.Object);
             var result = controler.AddOne(selfie);
@@ -54,12 +59,12 @@ namespace SelfieAWookie.Api.UI.Test
             };
             var repositoryMock = new Mock<ISelfieRepository>();
 
-            repositoryMock.Setup(item => item.GetAll()).Returns(expectedList);
+            repositoryMock.Setup(item => item.GetAll(It.IsAny<int>())).Returns(expectedList);
 
             var controler = new SelfieController(repositoryMock.Object);
 
             //ACT
-            var result = controler.TestApi();
+            var result = controler.GetAll(0);
 
 
             //ASSERT

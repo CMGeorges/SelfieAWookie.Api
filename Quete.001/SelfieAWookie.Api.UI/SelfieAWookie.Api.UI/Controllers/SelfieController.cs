@@ -7,6 +7,7 @@ using SelfieAWookie.Core.Selfies.Domain.Models;
 using SelfieAWookie.Core.Selfies.Infrastructures.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -36,7 +37,7 @@ namespace SelfieAWookie.Api.UI.Controllers
         #region Public methods
 
         [HttpGet]
-       public IActionResult TestApi()
+       public IActionResult GetAll([FromQuery] int wookieId = 0)
         {
 
             //return Enumerable.Range(1, 10).Select(Item => new Selfie() { Id = Item });
@@ -46,23 +47,59 @@ namespace SelfieAWookie.Api.UI.Controllers
             //            on selfie.WookieId equals wookie.Id
             //            select wookie;
 
-            var selfiesList = this._repository.GetAll();
+            var selfiesList = this._repository.GetAll(wookieId);
             var model = selfiesList.Select(item => new SelfieResumeDto(){ Title = item.Title, WookieId = item.Wookie.Id, NbSelfiesFromWookie = (item.Wookie?.Selfies?.Count).GetValueOrDefault(0) }).ToList();
 
 
             return this.Ok(model);
         }
 
+        //[Route("photos")]
+        //[HttpPost]
+        //public async Task<IActionResult> AddPictureAsync(IFormFile picture)
+        //{
+        //    using var stream = new StreamReader(this.Request.Body);
+
+        //    var content = await stream.ReadToEndAsync();
+
+
+        //    return this.Ok();
+        //}
+
+        [Route("photos")]
+        [HttpPost]
+        public IActionResult AddPictureAsync(IFormFile picture)
+        {
+            
+
+
+            return this.Ok();
+        }
+
+
+
+
 
         [HttpPost]
-        public IActionResult AddOne(SelfieDto selfie)
+        public IActionResult AddOne(SelfieDto dto)
         {
-
-
-            return this.Ok(new SelfieDto() 
+            Selfie addSelfie = this._repository.AddOne(new Selfie()
             {
-                Id = 1
+                ImagePath = dto.ImagePath,
+                Title = dto.Title
             });
+
+            this._repository.UnitOfWork.SaveChanges();
+
+            if (addSelfie != null)
+            {
+                dto.Id = addSelfie.Id;
+
+                return this.Ok(dto);
+            }
+
+            return this.BadRequest();
+           
         }
 
         #endregion
