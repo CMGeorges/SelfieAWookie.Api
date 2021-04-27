@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SelfieAWookie.Api.UI.Application.DTOs;
@@ -21,14 +22,16 @@ namespace SelfieAWookie.Api.UI.Controllers
         #region Fields
 
         private readonly ISelfieRepository _repository;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         #endregion
 
 
         #region Ctor
 
-        public SelfieController(ISelfieRepository repository)
+        public SelfieController(ISelfieRepository repository, IWebHostEnvironment webHostEnvironment)
         {
             this._repository = repository;
+            this._webHostEnvironment = webHostEnvironment;
         }
 
         #endregion
@@ -68,12 +71,24 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         [Route("photos")]
         [HttpPost]
-        public IActionResult AddPictureAsync(IFormFile picture)
+        public async Task<IActionResult> AddPictureAsync(IFormFile picture)
         {
-            
+            string filePath = Path.Combine(this._webHostEnvironment.ContentRootPath, @"images\selfies");
 
+            if (!Directory.Exists(filePath)) 
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            filePath = Path.Combine(filePath, picture.FileName);
 
-            return this.Ok();
+            using var stream = new FileStream(filePath,FileMode.OpenOrCreate);
+            await picture.CopyToAsync(stream);
+
+            var itemFile = this._repository.AddOnePicture(filePath);
+
+            this._repository.UnitOfWork.SaveChanges();
+
+            return this.Ok(itemFile);
         }
 
 
