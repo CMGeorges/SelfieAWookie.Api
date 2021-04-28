@@ -29,9 +29,10 @@ namespace SelfieAWookie.Core.Selfies.Infrastructures.Data
 
 
 
-            DbContextOptionsBuilder<SelfiesContext> builder = new DbContextOptionsBuilder<SelfiesContext>();
+            DbContextOptionsBuilder builder = new DbContextOptionsBuilder();
 
             builder.UseSqlServer(configurationRoot.GetConnectionString("SelfiesDatabase"));
+               // b => b.MigrationsAssembly("SelfieAWookie.Core.Data.Migrations"));
 
             SelfiesContext context = new SelfiesContext(builder.Options);
 

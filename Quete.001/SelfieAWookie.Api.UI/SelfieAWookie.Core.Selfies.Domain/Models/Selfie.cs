@@ -15,6 +15,7 @@ namespace SelfieAWookie.Core.Selfies.Domain.Models
 
         public string Title { get; set; }
         public string ImagePath { get; set; }
+        public string Description { get; set; }
 
 
         public int WookieId { get; set; }

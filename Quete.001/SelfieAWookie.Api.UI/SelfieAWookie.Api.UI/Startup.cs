@@ -29,6 +29,7 @@ namespace SelfieAWookie.Api.UI
             } );
 
             services.AddInjections();
+            services.AddCustomsSecurity();
              
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -50,6 +51,7 @@ namespace SelfieAWookie.Api.UI
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(SecurityMethods.DEFAULT_POLICY);//Authaurisation
 
             app.UseAuthorization();
 

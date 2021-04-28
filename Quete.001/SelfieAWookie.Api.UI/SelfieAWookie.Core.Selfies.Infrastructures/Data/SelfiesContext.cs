@@ -14,8 +14,13 @@ namespace SelfieAWookie.Core.Selfies.Infrastructures.Data
     public class SelfiesContext : DbContext, IUnitOfWork
     {
         #region Ctor
-        public SelfiesContext([NotNullAttribute] DbContextOptions<SelfiesContext> options ):base(options){}
-        public SelfiesContext():base(){}
+        //public SelfiesContext([NotNullAttribute] DbContextOptions<SelfiesContext> options ):base(options){}
+
+        public SelfiesContext([NotNullAttribute] DbContextOptions options) : base(options)
+        {
+        }
+        public SelfiesContext() : base() { }
+
         #endregion
 
         #region Internal methods
