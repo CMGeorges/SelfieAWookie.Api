@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using SelfieAWookie.Core.Selfies.Infrastructures.Data;
 using SelfieAWookie.Api.UI.ExtensionMethods;
+using Microsoft.AspNetCore.Identity;
 
 namespace SelfieAWookie.Api.UI
 {
@@ -28,8 +29,14 @@ namespace SelfieAWookie.Api.UI
                
             } );
 
+            services.AddDefaultIdentity<IdentityUser>(options =>
+            {
+                //options.SignIn.RequireConfirmedEmail = true;
+
+            }).AddEntityFrameworkStores<SelfiesContext>();
+
             services.AddInjections();
-            services.AddCustomsSecurity();
+            services.AddCustomsSecurity(this.Configuration);
              
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -53,6 +60,7 @@ namespace SelfieAWookie.Api.UI
             app.UseRouting();
             app.UseCors(SecurityMethods.DEFAULT_POLICY);//Authaurisation
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
