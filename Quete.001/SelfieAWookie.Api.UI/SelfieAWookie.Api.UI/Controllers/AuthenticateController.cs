@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using SelfieAWookie.Api.UI.Application.DTOs;
+using SelfieAWookie.Api.UI.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,8 +18,8 @@ using System.Threading.Tasks;
 
 namespace SelfieAWookie.Api.UI.Controllers
 {
-    [Route("api/v1/[controller]")]
     [ApiController]
+    [Route("api/v1/[controller]")]  
     public class AuthenticateController : ControllerBase
     {
 
@@ -36,13 +40,17 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         #region Public methods
         [Route("register")]
-        [HttpPost]
+        [HttpPost]      
         public async Task<IActionResult> Register([FromBody] AuthentificateUserDto userDto)
         {
             IActionResult result = this.BadRequest();
 
             var user = new IdentityUser(userDto.Login);
-            var success = await this._userManager.CreateAsync(user);
+            user.Email = userDto.Login;
+            user.UserName = userDto.Name;
+            
+
+            var success = await this._userManager.CreateAsync(user,userDto.Password);
 
 
             if (success.Succeeded)
@@ -57,7 +65,7 @@ namespace SelfieAWookie.Api.UI.Controllers
 
 
 
-        [HttpPost]
+        [HttpPost]        
         public async Task<IActionResult> Login([FromBody]AuthentificateUserDto userDto)
         {
             IActionResult result = this.BadRequest();
@@ -74,7 +82,7 @@ namespace SelfieAWookie.Api.UI.Controllers
                         Name = user.UserName,
                         Token = this.GenerateJwtToken(user)
                     });
-                    result = this.Ok();
+                    
                 }
             }
 
