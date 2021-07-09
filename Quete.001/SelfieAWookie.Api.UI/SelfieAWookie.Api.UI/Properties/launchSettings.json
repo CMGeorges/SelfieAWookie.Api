@@ -21,6 +21,15 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
+    "IIS Express Staging": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "environmentVariables": {
+        "Jwt__Key": "dhgmfdtufvgloufk",
+        "ASPNETCORE_ENVIRONMENT": "Staging"
+      }
+    },
     "SelfieAWookie.Api.UI": {
       "commandName": "Project",
       "launchBrowser": true,
