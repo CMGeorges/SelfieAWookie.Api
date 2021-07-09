@@ -35,6 +35,7 @@ namespace SelfieAWookie.Api.UI
 
             }).AddEntityFrameworkStores<SelfiesContext>();
 
+            services.AddCustomOptions(this.Configuration);
             services.AddInjections();
             services.AddCustomsSecurity(this.Configuration);
              
