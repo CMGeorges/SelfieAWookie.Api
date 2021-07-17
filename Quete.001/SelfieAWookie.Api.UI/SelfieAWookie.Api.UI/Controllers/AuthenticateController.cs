@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using SelfieAWookie.Api.UI.Application.DTOs;
@@ -24,18 +25,21 @@ namespace SelfieAWookie.Api.UI.Controllers
     [Route("api/v1/[controller]")]  
     public class AuthenticateController : ControllerBase
     {
+        private readonly ILogger<AuthenticateController> logger;
 
         #region Fields
         private readonly UserManager<IdentityUser> _userManager = null;
         private readonly IConfiguration _configuration = null;
+        private readonly IOptions<SecurityOption> options;
         private readonly SecurityOption _option = null;
         #endregion
 
 
         #region Ctor
 
-        public AuthenticateController(UserManager<IdentityUser> userManager, IConfiguration configuration,IOptions<SecurityOption> options)
+        public AuthenticateController(ILogger<AuthenticateController> logger,UserManager<IdentityUser> userManager, IConfiguration configuration,IOptions<SecurityOption> options)
         {
+            this.logger = logger;
             this._userManager = userManager;
             this._configuration = configuration;
             this._option = options.Value;
