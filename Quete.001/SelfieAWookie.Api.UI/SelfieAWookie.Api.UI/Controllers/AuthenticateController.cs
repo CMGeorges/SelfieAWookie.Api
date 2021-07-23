@@ -25,13 +25,14 @@ namespace SelfieAWookie.Api.UI.Controllers
     [Route("api/v1/[controller]")]  
     public class AuthenticateController : ControllerBase
     {
-        private readonly ILogger<AuthenticateController> logger;
 
         #region Fields
         private readonly UserManager<IdentityUser> _userManager = null;
         private readonly IConfiguration _configuration = null;
         private readonly IOptions<SecurityOption> options;
         private readonly SecurityOption _option = null;
+        private readonly ILogger<AuthenticateController> _logger;
+
         #endregion
 
 
@@ -39,7 +40,7 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         public AuthenticateController(ILogger<AuthenticateController> logger,UserManager<IdentityUser> userManager, IConfiguration configuration,IOptions<SecurityOption> options)
         {
-            this.logger = logger;
+            this._logger = logger;
             this._userManager = userManager;
             this._configuration = configuration;
             this._option = options.Value;
@@ -53,18 +54,27 @@ namespace SelfieAWookie.Api.UI.Controllers
         {
             IActionResult result = this.BadRequest();
 
-            var user = new IdentityUser(userDto.Login);
-            user.Email = userDto.Login;
-            user.UserName = userDto.Name;
-            
-
-            var success = await this._userManager.CreateAsync(user,userDto.Password);
-
-
-            if (success.Succeeded)
+            try
             {
-                userDto.Token = this.GenerateJwtToken(user);
-                result = this.Ok(userDto);
+                var user = new IdentityUser(userDto.Login);
+                user.Email = userDto.Login;
+                user.UserName = userDto.Name;
+
+
+                var success = await this._userManager.CreateAsync(user, userDto.Password);
+
+
+                if (success.Succeeded)
+                {
+                    userDto.Token = this.GenerateJwtToken(user);
+                    result = this.Ok(userDto);
+                }
+
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError("Register", ex, userDto);
+                this.Problem("Cannot Register");
             }
 
             return result;
@@ -77,25 +87,34 @@ namespace SelfieAWookie.Api.UI.Controllers
         public async Task<IActionResult> Login([FromBody]AuthentificateUserDto userDto)
         {
             IActionResult result = this.BadRequest();
-
-            var user = await this._userManager.FindByEmailAsync(userDto.Login);
-            if (user != null)
+            try
             {
-                var verif = await this._userManager.CheckPasswordAsync(user, userDto.Password);
-                if (verif)
+                var user = await this._userManager.FindByEmailAsync(userDto.Login);
+                if (user != null)
                 {
-                    result = this.Ok(new AuthentificateUserDto()
+                    var verif = await this._userManager.CheckPasswordAsync(user, userDto.Password);
+                    if (verif)
                     {
-                        Login = user.Email,
-                        Name = user.UserName,
-                        Token = this.GenerateJwtToken(user)
-                    });
-                    
+                        result = this.Ok(new AuthentificateUserDto()
+                        {
+                            Login = user.Email,
+                            Name = user.UserName,
+                            Token = this.GenerateJwtToken(user)
+                        });
+
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError("Login", ex, userDto);
+                result = this.Problem("Cannot log");
+
             }
 
 
             return result;
+
         }
         #endregion
 

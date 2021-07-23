@@ -8,6 +8,8 @@ using Microsoft.OpenApi.Models;
 using SelfieAWookie.Core.Selfies.Infrastructures.Data;
 using SelfieAWookie.Api.UI.ExtensionMethods;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
+using SelfieAWookie.Core.Selfies.Infrastructures.Loggers;
 
 namespace SelfieAWookie.Api.UI
 {
@@ -47,8 +49,10 @@ namespace SelfieAWookie.Api.UI
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            loggerFactory.AddProvider(new CustomLoggerProvider());//Custom Logger
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
