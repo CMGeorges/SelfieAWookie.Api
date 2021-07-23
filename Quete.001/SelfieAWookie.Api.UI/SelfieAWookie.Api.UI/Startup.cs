@@ -10,6 +10,7 @@ using SelfieAWookie.Api.UI.ExtensionMethods;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using SelfieAWookie.Core.Selfies.Infrastructures.Loggers;
+using SelfieAWookie.Api.UI.Middlewares;
 
 namespace SelfieAWookie.Api.UI
 {
@@ -51,7 +52,11 @@ namespace SelfieAWookie.Api.UI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
+            //TODO: Try to do a extension of IApplicationBuilder Like the others before
+
             loggerFactory.AddProvider(new CustomLoggerProvider());//Custom Logger
+
+            app.UseMiddleware<LogRequestMiddleware>();
 
             if (env.IsDevelopment())
             {
