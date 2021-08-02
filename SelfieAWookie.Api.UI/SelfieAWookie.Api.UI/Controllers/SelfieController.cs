@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SelfieAWookie.Api.UI.Application.DTOs;
 using SelfieAWookie.Api.UI.ExtensionMethods;
 using SelfieAWookie.Core.Selfies.Domain;
@@ -29,15 +30,17 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         private readonly ISelfieRepository _repository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<SelfieController> _logger;
         #endregion
 
 
         #region Ctor
 
-        public SelfieController(ISelfieRepository repository, IWebHostEnvironment webHostEnvironment)
+        public SelfieController(ISelfieRepository repository, IWebHostEnvironment webHostEnvironment, ILogger<SelfieController> logger)
         {
             this._repository = repository;
             this._webHostEnvironment = webHostEnvironment;
+            this._logger = logger;
         }
 
         #endregion
