@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Hosting;
@@ -6,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using SelfieAWookie.Api.UI.Application.Commands;
 using SelfieAWookie.Api.UI.Application.DTOs;
+using SelfieAWookie.Api.UI.Application.Queries;
 using SelfieAWookie.Api.UI.ExtensionMethods;
 using SelfieAWookie.Core.Selfies.Domain;
 using SelfieAWookie.Core.Selfies.Domain.Models;
@@ -27,7 +30,7 @@ namespace SelfieAWookie.Api.UI.Controllers
     {
 
         #region Fields
-
+        private readonly IMediator _mediator;
         private readonly ISelfieRepository _repository;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<SelfieController> _logger;
@@ -36,8 +39,9 @@ namespace SelfieAWookie.Api.UI.Controllers
 
         #region Ctor
 
-        public SelfieController(ISelfieRepository repository, IWebHostEnvironment webHostEnvironment, ILogger<SelfieController> logger)
+        public SelfieController(IMediator mediator,ISelfieRepository repository, IWebHostEnvironment webHostEnvironment, ILogger<SelfieController> logger)
         {
+            this._mediator = mediator;
             this._repository = repository;
             this._webHostEnvironment = webHostEnvironment;
             this._logger = logger;
@@ -59,9 +63,8 @@ namespace SelfieAWookie.Api.UI.Controllers
             //            on selfie.WookieId equals wookie.Id
             //            select wookie;
 
-            var selfiesList = this._repository.GetAll(wookieId);
-            var model = selfiesList.Select(item => new SelfieResumeDto(){ Title = item.Title, WookieId = item.Wookie.Id, NbSelfiesFromWookie = (item.Wookie?.Selfies?.Count).GetValueOrDefault(0) }).ToList();
 
+            var model = this._mediator.Send(new SelectAllSelfiesQuery() { WookieId = wookieId });
 
             return this.Ok(model);
         }
@@ -105,24 +108,20 @@ namespace SelfieAWookie.Api.UI.Controllers
 
 
         [HttpPost]
-        public IActionResult AddOne(SelfieDto dto)
+        public async Task<IActionResult> AddOneAsync(SelfieDto dto)
         {
-            Selfie addSelfie = this._repository.AddOne(new Selfie()
+            IActionResult result = this.BadRequest();
+
+         
+
+            var resultItem =  await this._mediator.Send(new AddSelfieCommand() { Item = dto });
+
+            if (resultItem != null )
             {
-                ImagePath = dto.ImagePath,
-                Title = dto.Title
-            });
-
-            this._repository.UnitOfWork.SaveChanges();
-
-            if (addSelfie != null)
-            {
-                dto.Id = addSelfie.Id;
-
-                return this.Ok(dto);
+                result = Ok(resultItem);
             }
 
-            return this.BadRequest();
+            return result;
            
         }
 

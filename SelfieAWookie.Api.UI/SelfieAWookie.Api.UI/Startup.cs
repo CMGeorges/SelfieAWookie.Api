@@ -39,8 +39,8 @@ namespace SelfieAWookie.Api.UI
             }).AddEntityFrameworkStores<SelfiesContext>();
 
             services.AddCustomOptions(this.Configuration);
-            services.AddInjections();
-            services.AddCustomsSecurity(this.Configuration);
+            services.AddInjections()
+                    .AddCustomsSecurity(this.Configuration);
              
             services.AddControllers();
             services.AddSwaggerGen(c =>
